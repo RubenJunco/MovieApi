@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trabajo Vue</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+</head>
+<body>
+<div id="app">
+    <h2>Login</h2>
+    <input type="text" v-model="loginUsername" placeholder="Usuario">
+    <input type="password" v-model="loginPassword" placeholder="Contraseña">
+    <button @click="login">Iniciar Sesión</button>
+
+<script>
+
+
+</script>
+
+<style>
+  body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+  }
+
+  #app {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+  }
+
+  h2, h3, h1 {
+      text-align: center;
+      color: #333;
+  }
+
+  input[type="text"], input[type="password"], input[type="email"], input[type="tel"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+  }
+
+  button {
+      background-color: #7969a3;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+  }
+
+  button:hover {
+      background-color: #574c74;
+  }
+
+  table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+  }
+
+  table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+  }
+
+  table th {
+      background-color: #f2f2f2;
+  }
+
+  table tr:hover {
+      background-color: #f1f1f1;
+  }
+
+  .error {
+      color: red;
+      text-align: center;
+  }
+
+  .success {
+      color: green;
+      text-align: center;
+  }
+</style>
+
+</body>
+</html>
