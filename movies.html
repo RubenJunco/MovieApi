@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Películas</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+    <div id="main">
+        <div class="listings" v-for="movie in movies" :key="movie.id" @click="viewMovie(movie)">
+            <img :src="'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/' + movie.poster_path" alt="Poster">
+            <th>{{ movie.title }}</th>
+            <hr>
+            <th><strong>Fecha de Estreno:</strong> {{ movie.release_date }}</th>
+            <hr>
+            <th>{{ movie.overview }}</th>
+            <hr>
+            <th><strong>Idioma Original:</strong> {{ movie.original_language }}</th>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, onMounted } = Vue;
+
+        createApp({
+            setup() {
+                const movies = ref([]);
+
+                const getMovies = () => {
+                    fetch('https://api.themoviedb.org/3/discover/movie?api_key=348764832907586e1b65e2ffccfbe151')
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data);
+                            movies.value = data.results;
+                        })
+                        .catch(error => {
+                            console.log("Error: " + error);
+                        });
+                };
+
+                const viewMovie = (movie) => {
+                    console.log(movie);
+                    const movieId = movie.id;
+                    // Redirige a movie.html con el ID de la película seleccionada
+                    window.location.href = `movie.html?id=${movieId}`;
+                };
+
+                onMounted(() => {
+                    console.log('App montada');
+                    getMovies();
+                });
+
+                return {
+                    movies,
+                    viewMovie
+                };
+            }
+        }).mount('#main');
+    </script>
+
+    <style type="text/css">
+        #main {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            justify-content: center;
+            align-items: flex;
+            min-height: 100vh;
+            background-color: #4043ff;
+        }
+
+        .listings {
+            background-color: #968ab1;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px #1f219c;
+            text-align: center;
+            margin: 10px;
+            cursor: pointer; /* Hace que el div parezca clicable */
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+    </style>
+</body>
+
+</html>

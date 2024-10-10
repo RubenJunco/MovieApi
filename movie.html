@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles de la Película</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <h1>{{ movie.title }}</h1>
+        <div class="movie-details">
+            <div class="movie-poster">
+                <img :src="'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/' + movie.poster_path" alt="Poster de {{ movie.title }}">
+            </div>
+            <div class="movie-info">
+                <th><strong>Fecha de Estreno:</strong> <span>{{ movie.release_date }}</span></th>
+                <hr>
+                <th><strong>Idioma Original:</strong> <span>{{ movie.original_language }}</span></th>
+                <hr>
+                <th class="overview"><strong>Descripción:</strong> {{ movie.overview }}</th>
+                <hr>
+                <div class="rating-container">
+                    
+                    <p><strong>Califica esta película:</strong></p>
+                    <button v-for="star in 5" :key="star" :class="{ active: userRating >= star }" @click="rateMovie(star)">
+                        {{ star }} ★
+                    </button>
+                    <hr>
+                    <p v-if="userRating > 0">Has calificado esta película con {{ userRating }} estrellas.</p>
+                    <hr>
+                    <button class="remove-rating" v-if="userRating > 0" @click="removeRating">Eliminar calificación</button>
+                </div>
+            </div>
+        </div>
+        <a href="movies.html" class="back-button">Volver a la Cartelera</a>
+    </div>
+
+    <script>
+        const { createApp, ref, onMounted } = Vue;
+
+        createApp({
+            setup() {
+                const movie = ref({});
+                const userRating = ref(0);
+
+                const getMovieIdFromUrl = () => {
+                    const params = new URLSearchParams(window.location.search);
+                    return params.get('id'); 
+                };
+
+                const getMovieDetails = (movieId) => {
+                    fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=348764832907586e1b65e2ffccfbe151`)
+                        .then(response => response.json())
+                        .then(data => {
+                            movie.value = data;
+                            loadRating(movieId);
+                        })
+                        .catch(error => {
+                            console.log("Error: " + error);
+                        });
+                };
+
+                const loadRating = (movieId) => {
+                    const storedRating = localStorage.getItem(`rating_${movieId}`);
+                    if (storedRating) {
+                        userRating.value = parseInt(storedRating);
+                    }
+                };
+
+                const rateMovie = (rating) => {
+                    const movieId = getMovieIdFromUrl();
+                    userRating.value = rating;
+                    localStorage.setItem(`rating_${movieId}`, rating);
+                };
+
+                const removeRating = () => {
+                    const movieId = getMovieIdFromUrl();
+                    userRating.value = 0;
+                    localStorage.removeItem(`rating_${movieId}`);
+                };
+
+                onMounted(() => {
+                    const movieId = getMovieIdFromUrl();
+                    if (movieId) {
+                        getMovieDetails(movieId);
+                    }
+                });
+
+                return {
+                    movie,
+                    userRating,
+                    rateMovie,
+                    removeRating
+                };
+            }
+        }).mount('#app');
+    </script>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #4751e4;
+        color: #333;
+    }
+
+    #app {
+        max-width: 1200px;
+        margin: 40px auto;
+        background-color: #eeeeee;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+
+    .movie-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .movie-poster {
+        flex: 1;
+        max-width: 400px;
+        text-align: center;
+    }
+
+    .movie-poster img {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px;
+    }
+
+    .movie-info {
+        flex: 2;
+        padding: 20px;
+    }
+
+    .movie-info p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+
+    .movie-info .overview {
+        font-style: italic;
+    }
+
+    .rating-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .rating-container button {
+        font-size: 1.5rem;
+        padding: 5px 10px;
+        margin: 5px;
+        border: none;
+        background-color: #fff022;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .rating-container button.active {
+        background-color: #ffc107;
+    }
+
+    .remove-rating {
+        background-color: #ff4c4c;
+        margin-top: 10px;
+    }
+
+    .back-button {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #4043ff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: background-color 0.2s ease;
+    }
+
+    .back-button:hover {
+        background-color: #3033cc;
+    }
+
+    @media (max-width: 768px) {
+        .movie-details {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .movie-info {
+            padding: 0;
+        }
+    }
+</style>
+
+</body>
+</html>
